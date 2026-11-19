@@ -1,4 +1,5 @@
 node_modules
 dist
-server/data
-server/storage
+.env
+.env*.local
+.DS_Store

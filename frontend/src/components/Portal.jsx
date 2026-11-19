@@ -13,6 +13,8 @@ const SRC = `${import.meta.env.BASE_URL}blackhole.mp4`
 const HOLD_MS = 1200
 const SLIDE_MS = 1100
 const FAILSAFE = 8000
+// koneksi lambat / mode hemat data: jangan unduh video 2.4MB, cukup latar hitam + teks (tirai tetap sama)
+const LITE = typeof navigator !== 'undefined' && !!navigator.connection && (navigator.connection.saveData || /(^|-)(2g|3g)$/.test(navigator.connection.effectiveType || ''))
 
 // Frame video 1024x576. object-fit: cover memotong sisi saat rasio layar berbeda, jadi posisi video diatur agar
 // LUBANG HITAM tetap utuh di layar dan teks diletakkan tepat di tengah lubangnya.
@@ -83,9 +85,9 @@ export default function Portal({ onGo, onDone }) {
   return (
     <div
       className={`portal${go ? ' portal--go' : ''}`}
-      style={{ '--tx': `${lay.cx}px`, '--ty': `${lay.cy}px`, '--hole': `${lay.hole}px` }}
+      style={{ '--tx': LITE ? '50%' : `${lay.cx}px`, '--ty': LITE ? '50%' : `${lay.cy}px`, '--hole': `${lay.hole}px` }}
     >
-      <video
+      {!LITE && <video
         ref={videoRef}
         className="portal__video"
         style={{ objectPosition: lay.objectPosition }}
@@ -98,7 +100,7 @@ export default function Portal({ onGo, onDone }) {
         disablePictureInPicture
         aria-hidden="true"
         tabIndex={-1}
-      />
+      />}
       <div className="portal__vignette" aria-hidden="true" />
       <div className="bh-text" aria-hidden="true">{t.loader.entering}</div>
       <button type="button" className="bh-skip" onClick={finish}>

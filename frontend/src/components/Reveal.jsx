@@ -8,7 +8,9 @@ import { useEffect, useRef, useState } from 'react'
 // Kenapa: posisi tersembunyi menggeser elemen (translate). Jika "keluar" dideteksi tepat di tepi layar, geseran itu
 // membawa elemen masuk lagi -> muncul -> keluar -> sembunyi -> ... tanpa henti (judul tampak naik-turun terus).
 // Dengan margin keluar > jarak geser, geseran tidak pernah cukup untuk memicu "masuk" lagi.
-export default function Rv({ as: Tag = 'div', delay = 0, x = 0, y = 36, blur = 8, scale = 1, className = '', style, children, ...rest }) {
+export default function Rv({ as: Tag = 'div', delay = 0, x: xProp = 0, y = 36, blur = 8, scale = 1, className = '', style, children, ...rest }) {
+  // di layar sempit, geseran dari samping dibatasi (28px): geseran besar menimbulkan scroll horizontal di HP
+  const x = typeof window !== 'undefined' && window.innerWidth < 700 ? Math.sign(xProp) * Math.min(Math.abs(xProp), 28) : xProp
   const ref = useRef(null)
   const [on, setOn] = useState(false)
 

@@ -6,7 +6,7 @@ export const profile = {
   'Berawal dari rasa penasaran tentang cara kerja website, saya mulai belajar membangunnya, dari tampilan hingga database, agar tidak hanya bisa dilihat, tetapi juga bisa digunakan.',
    about:
   'Sebagai siswa kelas 11 jurusan Rekayasa Perangkat Lunak (RPL), saya fokus belajar membangun website dan aplikasi yang tidak hanya enak dilihat, tetapi juga berfungsi dengan baik dan dapat terhubung dengan database.',
-  resume: 'https://drive.google.com/file/d/1olWRO6Q3yuScxe2FNg6ojC2OaGYOa4Ab/view?usp=sharing',
+  resume: 'https://drive.google.com/file/d/1jErn071jmVOoPG4p7dBtciYsW2VhzKU7/view?usp=share_link',
   github: 'https://github.com/tma-xyz',
   tiktok: 'tiktok.com/@slv_rayleigh',
   instagram: 'https://www.instagram.com/myb_sktii?obrf=MW1sdzhpOW9lczY0dg==',
@@ -28,27 +28,29 @@ export const experience = [
   { title: 'Belajar Mandiri di W3Schools', sub: 'Pelajar', year: '2025 – Sekarang', letter: 'D' },
 ]
 
+// Gambar ada di folder public/images -> di hasil build (Vercel) alamatnya /images/..., BUKAN public/images/...
+const IMG = `${import.meta.env.BASE_URL}images/`
+
 export const projects = [
-  { title: 'Website Belajar Digital', image: 'public/images/edu.png', desc: 'Website yang digunakan untuk para pelajar untuk belajar secara online.', hue: 130, link: 'https://tma-xyz.github.io/EduSpace/' },
-  { title: 'Website Toko Online', image: 'public/images/nfr.png', desc: 'Website yang digunakan untuk Menjual dan membeli produk secara online.', hue: 260, link: 'https://tma-xyz.github.io/Nufora/' },
-  { title: 'Website SMK To PTN', image: 'public/images/sptn.png', desc: 'Website yang digunakan untuk mencatat seberapa konsisten dan sampai mana materi yang dipelajari oleh pelajar tersebut.', hue: 190, link: 'https://tma-xyz.github.io/study-myb/begitulah' },
+  { title: 'Website Belajar Digital', image: IMG + 'edu.png', desc: 'Website yang digunakan untuk para pelajar untuk belajar secara online.', hue: 130, link: 'https://tma-xyz.github.io/EduSpace/' },
+  { title: 'Website Toko Online', image: IMG + 'nfr.png', desc: 'Website yang digunakan untuk Menjual dan membeli produk secara online.', hue: 260, link: 'https://tma-xyz.github.io/Nufora/' },
+  { title: 'Website SMK To PTN', image: IMG + 'sptn.png', desc: 'Website yang digunakan untuk mencatat seberapa konsisten dan sampai mana materi yang dipelajari oleh pelajar tersebut.', hue: 190, link: 'https://tma-xyz.github.io/study-myb/begitulah' },
 ]
 
 export const certificates = [
-  { title: 'Belajar Dasar UI/UX',image: 'public/images/sertif2.jpeg', issuer: 'Dicoding', hue: 30 },
-  { title: 'Belajar Dasar Pemrograman Web',image: 'public/images/sertif.jpeg', issuer: 'Dicoding', hue: 30 },
+  { title: 'Belajar Dasar UI/UX',image: IMG + 'sertif2.jpeg', issuer: 'Dicoding', hue: 30 },
+  { title: 'Belajar Dasar Pemrograman Web',image: IMG + 'sertif.jpeg', issuer: 'Dicoding', hue: 30 },
 ]
 
 export const techStack = [
-  { name: 'React JS', badge: '⚛', color: '#FFC46B' },
-  { name: 'Laravel', badge: 'L', color: '#FF5A1F' },
-  { name: 'Node JS', badge: 'JS', color: '#FFB020' },
-  { name: 'Vite', badge: '⚡', color: '#FF9A3D' },
-  { name: 'Bootstrap', badge: 'B', color: '#E0701A' },
-  { name: 'Supabase', badge: 'S', color: '#FFD27A' },
-  { name: 'Material UI', badge: 'M', color: '#FF8A00' },
+  { name: 'JavaScript', badge: 'JS', color: '#F7DF1E' },
+  { name: 'Python', badge: 'PY', color: '#3776AB' },
+  { name: 'Laravel', badge: 'L', color: '#FF2D20' },
+  { name: 'PHP', badge: 'PHP', color: '#777BB4' },
+  { name: 'Tailwindcss', badge: 'TW', color: '#38BDF8' },
+  { name: 'PostgreSQL', badge: 'PG', color: '#4169E1' },
+  { name: 'Github', badge: 'GH', color: '#FFF5E6' },
   { name: 'Vercel', badge: '▲', color: '#FFF5E6' },
-  { name: 'Figma', badge: 'F', color: '#FF6A2B' },
 ]
 
 // ====== TERJEMAHAN ENGLISH (dipakai saat tombol bahasa = EN) ======

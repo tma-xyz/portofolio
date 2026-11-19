@@ -37,11 +37,15 @@ a { color: inherit; text-decoration: none; }
     radial-gradient(ellipse 22% 38% at 12% 100%, rgba(255, 90, 0, .12), transparent 72%),
     repeating-linear-gradient(90deg, rgba(255, 170, 70, .025) 0 1px, transparent 1px 7px);
   opacity: 0; transition: opacity 1.6s ease .2s;
-  animation: aurora 14s ease-in-out infinite alternate;
 }
-@keyframes aurora { to { background-position: 0 0, -40px 0, 30px 0, 0 0, 0 0; filter: brightness(1.15); } }
 .beams--on { opacity: 1; }
 .site { position: relative; z-index: 2; opacity: 1; }
+/* bungkus latar (nebula/bintang) agar tidak pernah melebihi layar */
+.sky { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; contain: paint; }
+/* memotong luapan horizontal (geser tirai, animasi masuk dari samping). Tanpa ini HP melebarkan viewport (mis. 442px
+   pada layar 390px) dan mengecilkan seluruh tampilan. */
+.page { position: relative; overflow-x: clip; }
+@supports not (overflow: clip) { .page { overflow-x: hidden; } }
 .section { min-height: 100vh; min-height: 100svh; padding: clamp(150px, 22vh, 190px) 6vw 60px; scroll-margin-top: 0; }
 
 /* ---------- Portal (intro tirai) ---------- */
@@ -165,15 +169,28 @@ a { color: inherit; text-decoration: none; }
 .music { padding: 22px; }
 .music h3 { font-size: 20px; }
 .music p { margin: 10px 0 14px; font-size: 11px; color: var(--dim); line-height: 1.6; }
-.music iframe { border-radius: 12px; display: block; }
+.music iframe { border-radius: 12px; display: block; width: 100%; height: 352px; }
 
 /* ---------- about ---------- */
 .sec-title { text-align: center; font-size: clamp(34px, 4vw, 48px); font-weight: 800; margin-bottom: 50px; }
-.about__top { display: grid; grid-template-columns: 1fr 340px 1fr; align-items: center; gap: 24px; }
+.about__top { display: grid; grid-template-columns: 1fr 340px 1fr; align-items: center; gap: 40px; }
+.about__right { padding-left: 28px; }
 .about__hi { font-size: clamp(34px, 4vw, 52px); line-height: 1.12; margin-bottom: 26px; }
 .about__text { font-size: 13px; line-height: 1.85; color: #f2e7d4; margin-bottom: 22px; max-width: 330px; }
 .photo { position: relative; height: 380px; --x: -999px; --y: -999px;  }
-.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center; /* ini harus center, jangan center top lagi */
+}
+@media (max-width: 768px) {
+  .photo {
+    height: 300px;
+  }
+}
 .photo__alt { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .photo__dot { position: absolute; left: 0; top: 0; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: var(--text); box-shadow: 0 0 12px 2px rgba(255, 255, 255, .8); opacity: 0; transition: opacity .35s; pointer-events: none; }
 .about__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 70px; }
@@ -257,7 +274,8 @@ a { color: inherit; text-decoration: none; }
 .tech__item small { font-size: 11px; font-weight: 700; }
 
 /* ---------- contact ---------- */
-.contact__grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 26px; max-width: 1100px; margin: 0 auto; align-items: start; }
+.contact__grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 26px; max-width: 960px; margin: 0 auto; align-items: start; }
+.contact__socials { display: flex; flex-direction: column; gap: 10px; }
 .panel { padding: 24px; }
 .panel h3 { font-size: 20px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 .panel > p.dim { font-size: 12px; margin-bottom: 18px; line-height: 1.6; }
@@ -289,19 +307,14 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 16px; }
 .social__ic.ig { background: linear-gradient(45deg, #FFC46B, #FF8A00, #E0560A); }
 .social__ic.gh { background: #231913; }
 .social__ic.gm { background: linear-gradient(135deg, #FFD27A, #FF9A3D); color: #1A0B00; }
-.comments { margin-top: 18px; display: grid; gap: 10px; max-height: 320px; overflow-y: auto; }
-.comment { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; padding: 11px 12px; background: rgba(255, 255, 255, .06); border: 1px solid var(--line); border-radius: 10px; }
-.comment img, .comment__av { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: rgba(255, 255, 255, .1); display: grid; place-items: center; }
-.comment b { font-size: 12px; }
-.comment small { display: block; font-size: 11px; color: var(--dim); margin-top: 2px; word-break: break-word; }
-.comment time { font-size: 10px; color: var(--dim); }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
   .hero, .about__top, .about__cols, .contact__grid { grid-template-columns: 1fr; }
-  .grid, .stats { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .photo { max-width: 320px; margin: 0 auto; }
   .nav button { padding: 9px 12px; }
 }
@@ -311,7 +324,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 16px; }
   background: var(--glass); border: 1px solid var(--line); border-radius: 14px;
   backdrop-filter: blur(10px); box-shadow: inset 0 0 40px rgba(255, 142, 30, .06);
 }
-.card, .cert, .tech__item, .item, .stat, .panel, .social, .comment, .music {
+.card, .cert, .tech__item, .item, .stat, .panel, .social, .music {
   transition: transform .45s cubic-bezier(.2, .8, .2, 1), border-color .3s, box-shadow .4s, background .3s;
 }
 
@@ -364,10 +377,6 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 16px; }
 .tech__item:hover .tech__logo { transform: scale(1.15) rotate(-6deg); }
 
 /* ---------- contact ---------- */
-.comment { animation: cmIn .6s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
-@keyframes cmIn { from { opacity: 0; transform: translateY(14px); } }
-.skel { height: 52px; background: linear-gradient(100deg, rgba(255, 255, 255, .04) 30%, rgba(255, 255, 255, .13) 50%, rgba(255, 255, 255, .04) 70%); background-size: 200% 100%; animation: shimmer 1.3s linear infinite; }
-@keyframes shimmer { to { background-position: -200% 0; } }
 .field, .area, .upload { transition: border-color .3s, background .3s, box-shadow .3s; }
 .field:focus-within, .area:focus { box-shadow: 0 0 0 3px rgba(255, 147, 40, .2); background: rgba(255, 255, 255, .1); }
 
@@ -380,7 +389,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 16px; }
 /* ============ REVISI ============ */
 
 /* ---------- background luar angkasa ---------- */
-.nebula { position: fixed; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(80px); will-change: transform; opacity: .5; }
+.nebula { position: fixed; z-index: 0; pointer-events: none; border-radius: 50%; will-change: transform; opacity: .5; } /* tanpa filter: blur() - gradiennya sudah lembut; blur 80px pada layer raksasa sangat berat di GPU HP */
 .nebula--1 { width: 60vmax; height: 60vmax; left: -22vmax; top: -18vmax; background: radial-gradient(circle, rgba(190, 70, 0, .5), transparent 65%); animation: nebA 42s ease-in-out infinite alternate; }
 .nebula--2 { width: 55vmax; height: 55vmax; right: -24vmax; top: 18vh; background: radial-gradient(circle, rgba(255, 138, 0, .34), transparent 65%); animation: nebB 54s ease-in-out infinite alternate; }
 .nebula--3 { width: 48vmax; height: 48vmax; left: 14vw; bottom: -26vmax; background: radial-gradient(circle, rgba(140, 45, 0, .45), transparent 65%); animation: nebA 60s ease-in-out infinite alternate-reverse; }
@@ -389,7 +398,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 16px; }
 .galaxy {
   position: fixed; inset: -20%; z-index: 0; pointer-events: none; opacity: .5;
   background: linear-gradient(115deg, transparent 38%, rgba(255, 170, 70, .06) 47%, rgba(255, 210, 130, .09) 50%, rgba(255, 170, 70, .06) 53%, transparent 62%);
-  filter: blur(18px); animation: galaxy 70s linear infinite alternate;
+  animation: galaxy 70s linear infinite alternate;
 }
 @keyframes galaxy { to { transform: translate3d(6%, -3%, 0) rotate(3deg); } }
 
@@ -429,8 +438,10 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 16px; }
 .rv--in .stagger > :nth-child(n + 11) { animation-delay: .85s; }
 
 /* ---------- responsif: HP, tablet, laptop, layar besar ---------- */
-img, svg, canvas, iframe { max-width: 100%; }
+img, svg, canvas { max-width: 100%; height: auto; }
+iframe { max-width: 100%; }
 .contact__grid > *, .hero > *, .about__top > * { min-width: 0; }
+.card, .panel, .social, .item { overflow-wrap: break-word; word-break: break-word; }
 
 @media (min-width: 1500px) {
   .section { padding-left: max(6vw, calc((100vw - 1320px) / 2)); padding-right: max(6vw, calc((100vw - 1320px) / 2)); }
@@ -443,6 +454,7 @@ img, svg, canvas, iframe { max-width: 100%; }
   .hero, .about__top, .about__cols, .contact__grid { grid-template-columns: 1fr; }
   .grid { grid-template-columns: repeat(2, 1fr); }
   .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .about__right { padding-left: 0; }
   .about__text { max-width: none; }
   .about__top > * { text-align: center; }
   .about__top .btn { margin: 0 auto; }
@@ -454,29 +466,36 @@ img, svg, canvas, iframe { max-width: 100%; }
   .about__cols { margin-top: 50px; }
 }
 @media (max-width: 640px) {
-  .nav { top: 76px; height: 42px; padding: 4px; gap: 2px; }
+  .nav { top: 76px; height: 42px; padding: 4px; gap: 2px; max-width: calc(100vw - 16px); }
   .nav__pill { top: 4px; bottom: 4px; }
-  .nav button { padding: 0 11px; font-size: 11px; }
-  .lang { top: 12px; right: 12px; }
+  .nav button { padding: 0 10px; font-size: 11px; }
+  .lang { top: 14px; right: 14px; }
   .lang__btn { height: 34px; padding: 0 11px; font-size: 12px; }
-  .section { padding: 160px 18px 50px; }
+  .section { padding: 140px 16px 50px; }
+  .hero__title { font-size: clamp(32px, 8vw, 42px); }
+  .sec-title { font-size: clamp(28px, 7vw, 36px); margin-bottom: 28px; }
+  .about__hi { font-size: clamp(28px, 7vw, 40px); }
   .grid, .stats { grid-template-columns: 1fr; }
   .tabs { grid-template-columns: repeat(3, 1fr); gap: 4px; }
-  .tabs button { font-size: 11px; }
-  .tabs button { padding: 10px 6px; }
-  .tech { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
-  .panel { padding: 18px; }
+  .tabs button { font-size: 11px; padding: 10px 4px; }
+  .tech { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
+  .tech__logo { width: 44px; height: 44px; font-size: 17px; }
+  .panel { padding: 18px 16px; }
+  .social { padding: 10px 12px; }
   .music { padding: 16px; }
-  .music iframe { height: 232px; }
-  .photo { height: 300px; max-width: 260px; }
-  .hero__btns { flex-wrap: wrap; }
-  .comment { grid-template-columns: 28px 1fr; }
-  .comment time { grid-column: 2; }
-  .nebula { filter: blur(56px); opacity: .42; }
+  .photo { height: 280px; max-width: 240px; margin: 0 auto; }
+  .hero__btns { flex-wrap: wrap; justify-content: center; width: 100%; }
+  .hero__btns .btn { width: 100%; justify-content: center; }
+  .findme { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .nebula { opacity: .42; animation: none; will-change: auto; }
 }
-@media (max-width: 380px) {
-  .nav button { padding: 0 8px; font-size: 10.5px; }
-  .hero__title { font-size: 34px; }
+@media (max-width: 400px) {
+  .nav { top: 68px; }
+  .nav button { padding: 0 7px; font-size: 10px; }
+  .hero__title { font-size: 30px; }
+  .section { padding: 130px 12px 40px; }
+  .tabs button { font-size: 10px; padding: 8px 2px; }
+  .panel { padding: 14px 12px; }
 }
 @media (hover: none) {
   .card:hover, .cert:hover, .tech__item:hover, .stat:hover, .item:hover { transform: none; }
@@ -545,4 +564,20 @@ img, svg, canvas, iframe { max-width: 100%; }
 
 .card__thumb--cert {
   margin-bottom: 0 !important;
+}
+
+
+/* ============ PERFORMA HP / LAYAR SENTUH ============ */
+/* backdrop-filter di banyak panel di atas latar yang terus bergerak sangat berat di GPU HP -> dimatikan,
+   latar panel dibuat sedikit lebih pekat sebagai pengganti. Tampilan laptop tidak berubah. */
+@media (hover: none), (max-width: 900px) {
+  .nav, .glass, .tabs, .card, .cert, .tech__item, .lang__btn, .lang__menu { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .nav { background: rgba(20, 12, 5, .92); }
+  .glass { background: rgba(28, 17, 8, .78); }
+  .lang__btn, .lang__menu { background: rgba(20, 12, 5, .92); }
+  /* blur pada animasi muncul (Reveal, kartu) juga dibuang: hanya fade + geser */
+  .rv, .grid--out .card, .grid--out .cert, .grid--out .tech__item { filter: none; }
+  .galaxy { animation: none; }
+  @keyframes rise { from { opacity: 0; transform: translateY(34px); } }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(36px); } }
 }

@@ -69,7 +69,7 @@ export default function Portfolio() {
     <article key={c.title} className="cert" style={{ '--i': i }}>
       <div className="card__thumb card__thumb--cert" style={{ height: 'auto', padding: 0, overflow: 'hidden' }}>
         {c.image ? (
-          <img src={c.image} alt={c.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <img src={c.image} alt={c.title} loading="lazy" decoding="async" style={{ width: '100%', height: 'auto', display: 'block' }} />
         ) : (
           <span>{c.title}</span>
         )}

@@ -29,15 +29,18 @@ export default function App() {
       <Starfield />
       <div className="beams beams--on" aria-hidden="true" />
       {phase !== 'done' && <Portal onGo={onGo} onDone={onDone} />}
-      <div id="main-content" className={`site${phase === 'hold' ? ' site--shift' : phase === 'go' ? ' site--go' : ''}`}>
-        <LangSwitch />
-        <Navbar />
-        <main>
-          <Hero />
-          <About />
-          <Portfolio />
-          <Contact />
-        </main>
+      {/* .page memotong luapan horizontal (geser tirai, animasi dari samping) agar HP tidak melebarkan viewport & mengecilkan tampilan */}
+      <div className="page">
+        <div id="main-content" className={`site${phase === 'hold' ? ' site--shift' : phase === 'go' ? ' site--go' : ''}`}>
+          <LangSwitch />
+          <Navbar />
+          <main>
+            <Hero />
+            <About />
+            <Portfolio />
+            <Contact />
+          </main>
+        </div>
       </div>
     </>
   )

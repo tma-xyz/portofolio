@@ -5,6 +5,8 @@ import { useEffect, useRef } from 'react'
 //  - bintang berkelip, campuran putih / oranye / kuning (tema black hole), bintang besar dengan kilau silang
 //  - nebula bara hangat yang melayang pelan (CSS) + pita galaksi tipis
 //  - bintang jatuh yang lebih halus
+// Dibuat ringan untuk HP: DPR dibatasi, bintang lebih sedikit, ~30fps di layar sentuh, gambar per-warna (fillStyle jarang
+// berganti) dengan globalAlpha, tanpa efek blur-bayangan canvas.
 export default function Starfield() {
   const ref = useRef(null)
 
@@ -13,19 +15,22 @@ export default function Starfield() {
     const ctx = c.getContext('2d')
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const tints = ['255,255,255', '255,255,255', '255,255,255', '255,138,0', '255,196,107', '255,226,170', '255,170,70']
-    let w = 0, h = 0, dpr = 1, raf = 0, stars = [], shoots = []
+    const coarse = window.matchMedia('(pointer: coarse)').matches
+    let w = 0, h = 0, dpr = 1, raf = 0, stars = [], shoots = [], groups = [], small = false
+    let lastDraw = 0
     let sy = 0, tx = 0, ty = 0, mx = 0, my = 0
     let last = performance.now()
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
       w = window.innerWidth
       h = window.innerHeight
+      small = w < 700 || coarse // HP / layar sentuh: mode ringan
+      dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2)
       c.width = Math.round(w * dpr)
       c.height = Math.round(h * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       const area = w * h
-      const count = Math.min(w < 700 ? 150 : 320, Math.floor(area / 5200))
+      const count = Math.min(small ? 110 : 320, Math.floor(area / 5200))
       stars = Array.from({ length: count }, () => {
         const q = Math.random()
         const z = q < 0.58 ? 0.2 : q < 0.9 ? 0.55 : 1 
@@ -41,49 +46,56 @@ export default function Starfield() {
           glint: z === 1 && Math.random() < 0.35,
         }
       })
+      groups = [...new Set(tints)].map((t) => ({ fill: `rgb(${t})`, list: stars.filter((st) => st.tint === t) }))
     }
     resize()
 
     const tick = (now) => {
       raf = requestAnimationFrame(tick)
+      if (small && now - lastDraw < 30) return // ~30fps di HP: kelip bintang tidak butuh 60fps
+      lastDraw = now
       const dt = Math.min(2.5, (now - last) / 16.67)
       last = now
       mx += (tx - mx) * 0.04 * dt
       my += (ty - my) * 0.04 * dt
       ctx.clearRect(0, 0, w, h)
 
-      for (const s of stars) {
-        if (!reduce) { s.a += s.s * dt; s.x += s.dx * dt }
-        if (s.x < -10) s.x = w + 10
-        if (s.x > w + 10) s.x = -10
-        // parallax: lapisan dekat bergerak lebih jauh
-        const px = s.x + mx * s.z * 26
-        const py = (((s.y - sy * s.z * 0.28 + my * s.z * 26) % h) + h) % h
-        const tw = Math.sin(s.a) * 0.5 + 0.5
-        const o = 0.22 + tw * 0.78
-        ctx.fillStyle = `rgba(${s.tint},${o})`
-        ctx.beginPath()
-        ctx.arc(px, py, s.r, 0, 6.2832)
-        ctx.fill()
-        if (s.z === 1) {
-          // halo lembut
-          ctx.fillStyle = `rgba(${s.tint},${o * 0.14})`
+      for (const g of groups) {
+        ctx.fillStyle = g.fill
+        ctx.strokeStyle = g.fill
+        for (const s of g.list) {
+          if (!reduce) { s.a += s.s * dt; s.x += s.dx * dt }
+          if (s.x < -10) s.x = w + 10
+          if (s.x > w + 10) s.x = -10
+          // parallax: lapisan dekat bergerak lebih jauh
+          const px = s.x + mx * s.z * 26
+          const py = (((s.y - sy * s.z * 0.28 + my * s.z * 26) % h) + h) % h
+          const tw = Math.sin(s.a) * 0.5 + 0.5
+          const o = 0.22 + tw * 0.78
+          ctx.globalAlpha = o
           ctx.beginPath()
-          ctx.arc(px, py, s.r * 4, 0, 6.2832)
+          ctx.arc(px, py, s.r, 0, 6.2832)
           ctx.fill()
-          if (s.glint && tw > 0.6) {
-            const L = s.r * 7 * tw
-            ctx.strokeStyle = `rgba(${s.tint},${(tw - 0.6) * 1.4})`
-            ctx.lineWidth = 0.7
+          if (s.z === 1) {
+            ctx.globalAlpha = o * 0.14 // halo lembut
             ctx.beginPath()
-            ctx.moveTo(px - L, py); ctx.lineTo(px + L, py)
-            ctx.moveTo(px, py - L); ctx.lineTo(px, py + L)
-            ctx.stroke()
+            ctx.arc(px, py, s.r * 4, 0, 6.2832)
+            ctx.fill()
+            if (s.glint && tw > 0.6) {
+              const L = s.r * 7 * tw
+              ctx.globalAlpha = (tw - 0.6) * 1.4
+              ctx.lineWidth = 0.7
+              ctx.beginPath()
+              ctx.moveTo(px - L, py); ctx.lineTo(px + L, py)
+              ctx.moveTo(px, py - L); ctx.lineTo(px, py + L)
+              ctx.stroke()
+            }
           }
         }
       }
+      ctx.globalAlpha = 1
 
-      if (!reduce && Math.random() < 0.0032 * dt && shoots.length < 3) {
+      if (!reduce && Math.random() < 0.0032 * dt && shoots.length < (small ? 2 : 3)) {
         const sp = 8 + Math.random() * 5
         shoots.push({ x: Math.random() * w * 0.9, y: Math.random() * h * 0.5, vx: sp, vy: sp * 0.55, life: 1, len: 11 + Math.random() * 8 })
       }
@@ -102,12 +114,13 @@ export default function Starfield() {
         ctx.lineTo(tx2, ty2)
         ctx.stroke()
         ctx.fillStyle = `rgba(255,236,200,${s.life})`
-        ctx.shadowColor = '#ff9a1f'
-        ctx.shadowBlur = 10
         ctx.beginPath()
         ctx.arc(s.x, s.y, 1.6, 0, 6.2832)
         ctx.fill()
-        ctx.shadowBlur = 0
+        ctx.fillStyle = `rgba(255,150,40,${0.25 * s.life})` // pengganti blur-bayangan (mahal di GPU HP)
+        ctx.beginPath()
+        ctx.arc(s.x, s.y, 4.5, 0, 6.2832)
+        ctx.fill()
         s.x += s.vx * dt
         s.y += s.vy * dt
         s.life -= 0.012 * dt
@@ -142,12 +155,12 @@ export default function Starfield() {
   }, [])
 
   return (
-    <>
-      <div className="nebula nebula--1" aria-hidden="true" />
-      <div className="nebula nebula--2" aria-hidden="true" />
-      <div className="nebula nebula--3" aria-hidden="true" />
-      <div className="galaxy" aria-hidden="true" />
-      <canvas ref={ref} className="starfield" aria-hidden="true" />
-    </>
+    <div className="sky" aria-hidden="true">
+      <div className="nebula nebula--1" />
+      <div className="nebula nebula--2" />
+      <div className="nebula nebula--3" />
+      <div className="galaxy" />
+      <canvas ref={ref} className="starfield" />
+    </div>
   )
 }

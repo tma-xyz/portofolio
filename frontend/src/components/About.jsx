@@ -100,9 +100,11 @@ function Photo({ name }) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       const iw = alt.naturalWidth, ih = alt.naturalHeight
-      const s = Math.min(W / iw, H / ih)
+      // INI YANG GUA GANTI 1: min -> max
+      const s = Math.max(W / iw, H / ih)
       ctx.filter = 'grayscale(1) contrast(1.1)'
-      ctx.drawImage(alt, (W - iw * s) / 2, H - ih * s, iw * s, ih * s)
+      // INI YANG GUA GANTI 2: H - ih * s -> (H - ih * s) / 2
+      ctx.drawImage(alt, (W - iw * s) / 2, (H - ih * s) / 2, iw * s, ih * s)
       ctx.filter = 'none'
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.globalCompositeOperation = 'destination-in'
@@ -124,7 +126,7 @@ function Photo({ name }) {
 
   return (
     <div ref={box} className="photo">
-      <img src="/images/i.png" alt={name} draggable="false" />
+      <img src="/images/i.png" alt={name} draggable="false" decoding="async" />
      <canvas ref={cv} className="photo__alt" style={{ filter: 'grayscale(1) brightness(0.75) contrast(1.4)' }} />
       <span ref={dot} className="photo__dot" />
     </div>
@@ -175,7 +177,7 @@ export default function About() {
     <section id="about" className="about section">
       <Rv as="h2" className="sec-title" y={40}>{t.about.title}</Rv>
 
-      <div className="about__top" style={{ gap: '72px', padding: '0 40px' }}>
+      <div className="about__top">
         <Rv y={50} blur={10} delay={50}>
           <h2 className="about__hi">
             <span className="blue">{t.about.hi}</span>
@@ -191,7 +193,7 @@ export default function About() {
           <Photo name={profile.name} />
         </Rv>
 
-        <Rv y={50} blur={10} delay={250}>
+        <Rv className="about__right" y={50} blur={10} delay={250}>
           <p className="about__text">{profile.about}</p>
           <a className="btn btn--outline" href="#portfolio">
             <CodeXml size={12} /> {t.about.projects}
