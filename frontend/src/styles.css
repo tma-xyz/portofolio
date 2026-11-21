@@ -173,25 +173,35 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- about ---------- */
 .sec-title { text-align: center; font-size: clamp(34px, 4vw, 48px); font-weight: 800; margin-bottom: 50px; }
-.about__top { display: grid; grid-template-columns: 1fr 420px 1fr; align-items: center; gap: 40px; }
+.about__top { display: grid; grid-template-columns: 1fr 480px 1fr; align-items: center; gap: 40px; }
 .about__right { padding-left: 28px; }
 .about__hi { font-size: clamp(34px, 4vw, 52px); line-height: 1.12; margin-bottom: 26px; }
 .about__text { font-size: 13px; line-height: 1.85; color: #f2e7d4; margin-bottom: 22px; max-width: 330px; }
-.photo { position: relative; height: 480px; width: 100%; border-radius: 20px; overflow: hidden; margin-top: -30px; --x: -999px; --y: -999px; }
+.photo {
+  position: relative;
+  height: 560px;
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  margin-top: -60px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 138, 0, 0.12);
+  --x: -999px;
+  --y: -999px;
+}
 .photo img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 25%;
-  border-radius: 20px;
+  object-position: center 20%;
+  border-radius: 24px;
 }
 @media (max-width: 768px) {
   .photo {
-    height: 380px;
-    border-radius: 16px;
-    margin-top: -15px;
+    height: 420px;
+    border-radius: 18px;
+    margin-top: -20px;
   }
 }
 .photo__alt { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -318,7 +328,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 16px; }
   .hero, .about__top, .about__cols, .contact__grid { grid-template-columns: 1fr; }
   .grid { grid-template-columns: repeat(2, 1fr); }
   .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .photo { max-width: 380px; height: 420px; margin: 0 auto; }
+  .photo { max-width: 420px; height: 480px; margin: -20px auto 30px; }
   .nav button { padding: 9px 12px; }
 }
 
@@ -450,8 +460,8 @@ iframe { max-width: 100%; }
   .section { padding-left: max(6vw, calc((100vw - 1320px) / 2)); padding-right: max(6vw, calc((100vw - 1320px) / 2)); }
 }
 @media (max-width: 1100px) {
-  .about__top { grid-template-columns: 1fr 360px 1fr; gap: 24px; }
-  .photo { height: 420px; }
+  .about__top { grid-template-columns: 1fr 400px 1fr; gap: 24px; }
+  .photo { height: 480px; margin-top: -40px; }
 }
 @media (max-width: 900px) {
   .hero, .about__top, .about__cols, .contact__grid { grid-template-columns: 1fr; }
@@ -486,7 +496,7 @@ iframe { max-width: 100%; }
   .panel { padding: 18px 16px; }
   .social { padding: 10px 12px; }
   .music { padding: 16px; }
-  .photo { height: 350px; max-width: 300px; margin: 0 auto; }
+  .photo { height: 400px; max-width: 320px; margin: -10px auto 25px; }
   .hero__btns { flex-wrap: wrap; justify-content: center; width: 100%; }
   .hero__btns .btn { width: 100%; justify-content: center; }
   .findme { flex-wrap: wrap; justify-content: center; gap: 8px; }
