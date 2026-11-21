@@ -100,11 +100,12 @@ function Photo({ name }) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       const iw = alt.naturalWidth, ih = alt.naturalHeight
-      // INI YANG GUA GANTI 1: min -> max
       const s = Math.max(W / iw, H / ih)
       ctx.filter = 'grayscale(1) contrast(1.1)'
-      // INI YANG GUA GANTI 2: H - ih * s -> (H - ih * s) / 2
-      ctx.drawImage(alt, (W - iw * s) / 2, (H - ih * s) / 2, iw * s, ih * s)
+      // Sinkron dengan object-position: center 20%
+      const dx = (W - iw * s) / 2
+      const dy = (H - ih * s) * 0.2
+      ctx.drawImage(alt, dx, dy, iw * s, ih * s)
       ctx.filter = 'none'
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.globalCompositeOperation = 'destination-in'
