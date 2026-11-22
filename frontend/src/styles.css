@@ -594,3 +594,33 @@ iframe { max-width: 100%; }
   @keyframes rise { from { opacity: 0; transform: translateY(34px); } }
   @keyframes cardIn { from { opacity: 0; transform: translateY(36px); } }
 }
+/* FIX HP: foto jangan ada kotak + nama jangan item */
+@media (hover: none), (max-width: 900px) {
+  .photo {
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+  }
+  .photo img {
+    border-radius: 18px;
+    /* biar nyatu, bukan kayak tempelan */
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
+  /* Matikan gradient text di HP, pake warna solid aja */
+  .about__name {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    color: #FFF5E6 !important;
+    -webkit-text-fill-color: #FFF5E6 !important;
+  }
+}
+
+/* Buat semua device: nama tetep kebaca kalo gradient gagal */
+@supports not ((-webkit-background-clip: text) and (color: transparent)) {
+  .about__name {
+    background: none;
+    color: #FFF5E6;
+  }
+}
